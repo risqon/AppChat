@@ -7,8 +7,10 @@ import history from '../../history';
 
 class Login extends Component {
 	state = {
-		email: '',
-		password: ''
+		username: '',
+		password: '',
+		loading : false,
+		isLogin: false
 	};
 
 	handleChangeText = (e) => {
@@ -20,29 +22,28 @@ class Login extends Component {
 	handleLoginSubmit = async (e) => {
 		e.preventDefault()
 		console.log('dari screen login');
-		const { email, password } = this.state;
-		if (email && password) {
+		const { username, password } = this.state;
+		if (username && password) {
 			const body = {
-				email,
+				username,
 				password
 			};
 			try {
 				await this.props.loginAPI(body);
 				this.setState({
-					email: '',
+					username: '',
 					password: ''
 				});
-				history.push('/chat');
-				alert('login success')
+				history.push('/chat')
 
 			} catch (error) {
 				console.log(error);
 			}
 		} else {
-			if (email || password === 0) {
-				console.log('email atau password tidak boleh kosong');
+			if (username || password === 0) {
+				console.log('username atau password tidak boleh kosong');
 			} else {
-				alert('emai atau password tidak boleh kosong');
+				alert('username atau password tidak boleh kosong');
 			}
 		}
 	};
@@ -58,11 +59,11 @@ class Login extends Component {
 								className="form-control"
 								type="text"
 								required
-								id="email"
+								id="username"
 								onChange={this.handleChangeText}
 							/>
 							<span />
-							<label>Email</label>
+							<label>Username</label>
 						</div>
 						<div className="txt_field">
 							<input
@@ -76,7 +77,7 @@ class Login extends Component {
 							<label>Password</label>
 						</div>
 						<div className="pass">Forgot Password</div>
-						<Button title="Login" onClick={this.handleLoginSubmit} loading={this.props.isLoading} />
+						<Button title="Login" onClick={this.handleLoginSubmit} loading={this.props.isLoading} login={this.props.isLogin}/>
 						<div className="signup_link">
 							Not a member? <a href="/register">SignUp</a>
 						</div>
@@ -88,7 +89,6 @@ class Login extends Component {
 }
 
 const reduxState = (state) => ({
-	popupProps: state.popup,
 	isLoading: state.loading,
 	isLogin: state.isLogin
 });

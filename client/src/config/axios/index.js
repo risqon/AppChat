@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const URL = 'http://localhost:3001/api';
+const URL = 'http://localhost:3001/api'
 
 export const RequestApi = ({ method, url, data = "", baseURL}) => {
   let head = {

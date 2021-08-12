@@ -63,6 +63,7 @@ body,html{
   border:1px !important;
   color:rgba(255, 255, 255, 0.822) !important;
   margin-top: 1px;
+  height: 50px;
 }
   .type_msg:focus{
     box-shadow:none !important;
@@ -70,17 +71,18 @@ body,html{
 }
 .type_name {
   background-color: rgba(0,0,0,0.3) !important;
-  border: solid 1px black !important;
+  border:  1px !important;
   color:white !important;
   overflow-y: auto;
 }
 .send_btn{
   border-radius: 0 17px 17px 0 !important;
   background-color: rgb(0, 203, 218) !important;
-  margin-top: 10px;
+  margin-top: 49px;
   border:0 !important;
   color: rgb(0, 0, 0) !important;
   cursor: pointer;
+  height: 50px;
 }
 
 .icon-text {
@@ -102,6 +104,7 @@ border-radius: 15px;
 background-color: #b3f1ff;
 padding: 9px;
 position: relative;
+max-width: 300px;
 }
 .msg_cotainer p {
   color: #1c2230;
@@ -126,20 +129,21 @@ position: relative;
 
 
 .user_img_msg{
-  height: 50px;
-  width: 50px;
+  height: 40px;
+  width: 40px;
   border:1.5px solid #eff0f1;
   background-color: rgb(104, 101, 155);
 }
 .rounded-circle {
   color: #222227;
   font-family: 'Arvo', serif;
-  padding-left: 10px;
-  padding-top: 10px;
+  padding-left: 8px;
+  padding-top: 8px;
 }
 .name {
   color: #e7c75b;
   font-family: arvo;
+  padding-top: 10px;
 }
 .img_cont_msg{
   height: 40px;
@@ -187,7 +191,18 @@ to {
 }
 
 .emoji{
-  margin-top: 53px;
-  margin-left: 565px;
   position: absolute;
+  height: 50px;
+  padding-top: 10px;
+  color:rgba(255, 255, 255, 0.822) !important;
+  right: 0px;
+  margin-right: 20px;
+  margin-top: 1px;
+  cursor: pointer
+}
+
+.emoji-picker {
+  position: absolute;
+  right: 0;
+  background: chartreuse;
 }

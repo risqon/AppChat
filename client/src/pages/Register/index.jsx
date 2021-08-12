@@ -7,6 +7,7 @@ import history from '../../history';
 
 class Register extends Component {
 	state = {
+		username: '',
 		email: '',
 		password: '',
 		retypepassword: ''
@@ -19,10 +20,12 @@ class Register extends Component {
 	};
 
 	handleRegisterSubmit = async (e) => {
-		const { email, password, retypepassword } = this.state;
+		e.preventDefault()
+		const { username ,email, password, retypepassword } = this.state;
 		console.log('dari screen register');
-		if (email && password && retypepassword) {
+		if (username && email && password && retypepassword) {
 			const body = {
+				username,
 				email,
 				password,
 				retypepassword
@@ -30,17 +33,17 @@ class Register extends Component {
 			try {
 				await this.props.registerAPI(body);
 				this.setState({
+					username: '',
 					email:'',
 					password:'',
 					retypepassword:''
 				})
 				history.push('/')
-				alert('Registrasi sukses')
 			} catch (error) {
 				console.log(error);
 			}
 		} else {
-			if (email || password || retypepassword === 0) {
+			if (username || email || password || retypepassword === 0) {
 				console.log('email atau password tidak boleh kosong');
 			} else {
 				alert('emai atau password tidak boleh kosong');
@@ -54,6 +57,17 @@ class Register extends Component {
 				<div className="center">
 					<h1>Registrasi</h1>
 					<form>
+					<div className="txt_field">
+							<input
+								className="form-control"
+								type="text"
+								required
+								id="username"
+								onChange={this.handleChangeText}
+							/>
+							<span />
+							<label>Username</label>
+						</div>
 						<div className="txt_field">
 							<input
 								className="form-control"

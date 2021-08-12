@@ -1,11 +1,12 @@
 import React from 'react';
-import Emoji from './Emoji';
 import { MdInsertEmoticon } from "react-icons/md";
+
+import Picker from 'emoji-picker-react';
 
 export default class ChatForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { name: '', message: '' };
+        this.state = { name: '', message: '', chosenEmoji: null };
 
         this.handleName = this.handleName.bind(this);
         this.handleMessage = this.handleMessage.bind(this);
@@ -25,7 +26,12 @@ export default class ChatForm extends React.Component {
         event.preventDefault();
         this.props.addChat(this.state.name, this.state.message);
         this.setState({ name: '', message: '' })
+    }
 
+    handleEmoji = (event, emojiObject) => {
+        this.setState({
+            chosenEmoji: ''
+        })
     }
 
     render() {
@@ -35,14 +41,17 @@ export default class ChatForm extends React.Component {
                     <div className='input-group'>
                         <div className='container'>
                             <div className='form-group row'>
-                                <div className="emoji">
-                                    <MdInsertEmoticon size={30} />
-                                </div>
+
                                 <div className="col form">
                                     <input type="text" className="form-control type_name" value={this.state.name} onChange={this.handleName} placeholder='Insert Your Name Here' required />
-                                    <input type="text" className="form-control type_msg" value={this.state.message} onChange={this.handleMessage} placeholder='Say Something' />
-                                </div>
+                                        <Picker onEmojiClick={this.handleEmoji} pickerStyle={{width: '250px', margin: '0px', position: 'absolute'}} />
+                                    <div className="emoji">
+                                        <MdInsertEmoticon size={30} />
+                                    </div>
+                                    <input type="text" className="form-control type_msg" value={this.state.message} onChange={this.handleMessage} placeholder='Type a message' />
 
+
+                                </div>
                                 <div className="input-group-append right-form">
                                     <button type="submit" value="Send" className='input-group-text send_btn'><i className="fas fa-location-arrow"></i></button>
                                 </div>
@@ -51,14 +60,6 @@ export default class ChatForm extends React.Component {
                     </div>
                 </form>
             </div>
-
-            // <form onSubmit={this.handleSubmit}>
-            //     <div className="shadow-lg p-3 mb-5 bg-dark rounded">
-            //         <input id="name" className="form-control" type="text" value={this.state.name} onChange={this.handleName} placeholder="Your Name" />
-            //         <textarea id="message" className="form-control" cols="3" value={this.state.message} onChange={this.handleMessage} placeholder="Type your message..." />
-            //         <button className="btn btn-success my-2 fas fa-paperclip" type="submit">Sent</button>
-            //     </div>
-            // </form>
         );
     }
 }

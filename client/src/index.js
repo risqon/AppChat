@@ -1,11 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-//import App from './App';
-import ChatBox from './pages/Chat/ChatBox'
+import App from './App';
 import * as serviceWorker from './serviceWorker';
-import Login from './pages/Login'
-import App from './App.jsx'
+
 
 ReactDOM.render(
   <React.StrictMode>

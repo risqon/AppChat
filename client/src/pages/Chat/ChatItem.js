@@ -11,10 +11,10 @@ export default function ChatItem(props) {
             <div className='boks'>
                 <h6 className='name'>{props.name}</h6>
                 <div className="msg_cotainer">
-                    <p> <ReactMarkdown
+                    <div> <ReactMarkdown
                         source={props.message}
                         escapeHtml={false}
-                    /> </p>
+                    /> </div>
                 </div>
 
                 <div className='row'>

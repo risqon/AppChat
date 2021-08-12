@@ -1,52 +1,27 @@
 import React, { Component } from 'react';
 import ChatForm from './ChatForm';
 import ChatList from './ChatList';
-import axios from 'axios';
-import io from 'socket.io-client'
 import moment from 'moment'
-import Swal from 'sweetalert2'
+import { RequestApi } from '../../config/axios';
+import io from 'socket.io-client'
 
 const socket = io("http://localhost:3001");
-const request = axios.create({
-    baseURL: 'http://localhost:3001/api/',
-    timeout: 1000,
-    headers: { 'X-Custom-Header': 'foobar' }
-});
-
 export default class ChatBox extends Component {
     constructor(props) {
         super(props);
-        this.state = { data: [] }
-        this.addChat = this.addChat.bind(this)
-        this.resendChat = this.resendChat.bind(this)
-        this.removeChat = this.removeChat.bind(this)
+        this.state = { data: [], loading: false }
+
     }
 
     componentDidMount() {
-        request.get('/chats')
-            .then(function ({ data }) {
-                const chats = data.map(item => {
-                    item.sent = true;
-                    return item;
-                })
-                console.log(data[0].name)
-                
-                this.setState({ data: chats })
-            }.bind(this))
-            .catch(function (error) {
-                console.log(error);
-            });
+        this.getChat()
 
-
-            
         socket.on('newChat', (data) => {
             const time = moment().format('h:mm a')
-
             this.setState((state, props) => ({
                 data: [...state.data, { ...data, time, sent: true }]
             }))
         })
-
         socket.on('delete-frontEnd', (id) => {
             console.log(id)
             this.setState((state, props) => ({
@@ -57,91 +32,152 @@ export default class ChatBox extends Component {
         })
     }
 
-    userData(name, message) {
-        request.get('chats', {})
+    getChat = async () => {
+        const token = await localStorage.getItem(`setToken`)
+        try {
+            this.setState({
+                loading: true
+            })
+            const req = {
+                method: 'GET',
+                url: '/chats',
+                data: {
+                    headers: {
+                        'x-access-token': token
+                    }
+                }
+            }
+            const res = await RequestApi(req)
+            const chats = res.data.map(item => {
+                item.sent = true
+                return item
+            })
+            console.log('get', res)
+            this.setState({
+                data: chats
+            })
+        } catch (error) {
+            console.log(error)
+        } finally {
+            this.setState({
+                loading: false
+            })
+        }
     }
 
-
-    addChat(name, message) {
+    addChat = async (name, message) => {
         const id = Date.now()
         const time = moment().format('h:mm a')
+        const token = await localStorage.getItem(`setToken`)
 
-        this.setState((state, props) => ({ data: [...state.data, { id, name, message, time, sent: true }] }));
+        this.setState((state, props) =>
+        ({
+            data:
+                [...state.data,
+                {
+                    id,
+                    name,
+                    message,
+                    time,
+                    sent: true
+                }]
+        }))
+
         socket.emit('newChat', {
             id,
             name,
             message
         })
-        request.post('chats', {
-            id,
-            name,
-            message
-        }).then(function (data) {
-            console.log(data);
-        }).catch(function (error) {
-            console.log(error);
-            this.setState((state, props) => ({
+
+        try {
+            const req = {
+                method: 'POST',
+                url: '/chats',
+                data: {
+                    data: {
+                        id, name, message
+                    },
+                    headers: {
+                        'x-access-token': token
+                    }
+                }
+            }
+            const res = await RequestApi(req)
+            console.log(res)
+        } catch (error) {
+            console.log(error)
+            this.setState(state => ({
                 data: state.data.map(item => {
                     if (item.id === id) {
                         item.sent = false
                     }
                     return item
                 })
-            }));
-        }.bind(this));
+            }))
+        }
     }
 
-    resendChat(id, name, message) {
-        request.post('chats', {
-            id,
-            name,
-            message
-        }).then((data) => {
-            //console.log(data);
-            this.setState((state, props) => ({
-                data: state.data.map(item => {
+    resendChat = async (id, name, message) => {
+        const token = await localStorage.getItem(`setToken`)
+
+        try {
+            const req = {
+                method: 'POSH',
+                url: '/chats',
+                data: {
+                    data: {
+                        id, name, message
+                    },
+                    headers: {
+                        'x-access-token': token
+                    }
+                }
+            }
+            const res = await RequestApi(req)
+            console.log('resend', res)
+            this.setState(state => ({
+                data: state.res.map(item => {
                     if (item.id === id) {
                         item.sent = true
                     }
                     return item
                 })
-            }));
-        }).catch(function (error) {
-            console.log(error);
-        });
+            }))
+        } catch (error) {
+            console.log(error)
+        }
     }
 
-    removeChat(id) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'This message will be deleted !',
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#08db93',
-            confirmButtonText: 'Delete',
-            cancelButtonText: 'No',
-        }).then(result => {
-            if (result.value) {
-                this.setState((state, props) => ({
-                    data: state.data.filter(item => item.id !== id)
-                }));
+    removeChat = async (id) => {
+        const token = await localStorage.getItem(`setToken`)
 
-                socket.emit('delete-backEnd', {
-                    id
-                })
-                request.delete(`chats/${id}`).then(data => {
-                    Swal.fire({
-                        type: 'success',
-                        title: 'chat has been deleted..',
-                        showConfirmationButton: false,
-                    })
-                }).catch(err => {
-                    console.log(err);
-                })
+        try {
+            const req = {
+                method: 'DELETE',
+                url: `/chats/${id}`,
+                data: {
+
+                    headers: {
+                        'x-access-token': token
+                    }
+                }
             }
-        })
+            socket.emit('delete-backEnd', {
+                id
+            })
+
+            const res = await RequestApi(req)
+            if (res) {
+                this.setState(state => ({
+                    data: state.data.filter(item => item.id !== id)
+                }))
+            }
+            alert('are you sere??')
+        } catch (error) {
+            console.log(error)
+        }
     }
+
 
     render() {
         return (
