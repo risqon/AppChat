@@ -6,11 +6,28 @@ import Picker from 'emoji-picker-react';
 export default class ChatForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { name: '', message: '', chosenEmoji: null };
+        this.state = {
+            name: '',
+            message: '',
+            chosenEmoji: null,
+            isActive: false
+        };
 
         this.handleName = this.handleName.bind(this);
         this.handleMessage = this.handleMessage.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleShow = () => {
+        this.setState({
+            isActive: true
+        })
+    }
+
+    handleHide = () => {
+        this.setState({
+            isActive: false
+        })
     }
 
     handleName(event) {
@@ -41,16 +58,25 @@ export default class ChatForm extends React.Component {
                     <div className='input-group'>
                         <div className='container'>
                             <div className='form-group row'>
-
                                 <div className="col form">
                                     <input type="text" className="form-control type_name" value={this.state.name} onChange={this.handleName} placeholder='Insert Your Name Here' required />
-                                        <Picker onEmojiClick={this.handleEmoji} pickerStyle={{width: '250px', margin: '0px', position: 'absolute'}} />
-                                    <div className="emoji">
-                                        <MdInsertEmoticon size={30} />
+                                    {this.state.isActive ? <div className="emoji">
+                                        <Picker
+                                            onEmojiClick={this.handleEmoji}
+                                            pickerStyle={{
+                                                width: '250px',
+                                                position: 'absolute',
+                                                margin: '25px',
+                                            }}
+                                        />
+                                        <MdInsertEmoticon size={30} onClick={this.handleHide} />
                                     </div>
+                                        :
+                                        <div className="emoji">
+                                            <MdInsertEmoticon size={30} onClick={this.handleShow} />
+                                        </div>
+                                    }
                                     <input type="text" className="form-control type_msg" value={this.state.message} onChange={this.handleMessage} placeholder='Type a message' />
-
-
                                 </div>
                                 <div className="input-group-append right-form">
                                     <button type="submit" value="Send" className='input-group-text send_btn'><i className="fas fa-location-arrow"></i></button>

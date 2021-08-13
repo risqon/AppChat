@@ -22,7 +22,7 @@ class App extends Component {
 						<Route path="/register">
 							<Register />
 						</Route>
-						<Route exact path="/chat">
+						<Route path="/chat">
 							<ChatBox />
 						</Route>
 					</Switch>

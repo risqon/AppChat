@@ -200,9 +200,3 @@ to {
   margin-top: 1px;
   cursor: pointer
 }
-
-.emoji-picker {
-  position: absolute;
-  right: 0;
-  background: chartreuse;
-}

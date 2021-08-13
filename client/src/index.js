@@ -3,11 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import Emoji from './pages/Chat/Emoji'
+
 
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Emoji />
   </React.StrictMode>,
   document.getElementById('root')
 );
