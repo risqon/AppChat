@@ -1,23 +1,17 @@
-import React, { useState } from 'react';
-import Picker from 'emoji-picker-react';
+    function toggleEmojiPicker() {
+      this.setState({
+        showEmojiPicker: !this.state.showEmojiPicker,
+      });
+    }
 
-const Emoji = () => {
-  const [chosenEmoji, setChosenEmoji] = useState(null);
+    function addEmoji(emoji) {
+      const { message } = this.state;
+      const text = `${message}${emoji.native}`;
 
-  const onEmojiClick = (event, emojiObject) => {
-    setChosenEmoji(emojiObject);
-  };
-
-  return (
-    <div>
-      {chosenEmoji ? (
-        <span>You chose: {chosenEmoji.emoji}</span>
-      ) : (
-        <span>No emoji Chosen</span>
-      )}
-      <Picker onEmojiClick={onEmojiClick} />
-    </div>
-  );
-};
-
-export default Emoji
+      this.setState({
+        message: text,
+        showEmojiPicker: false,
+      });
+    }
+      
+    export {toggleEmojiPicker, addEmoji };

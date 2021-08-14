@@ -2,7 +2,7 @@ import axios from "axios"
 
 const URL = 'http://localhost:3001/api'
 
-export const RequestApi = ({ method, url, data = "", baseURL}) => {
+const RequestApi = ({ method, url, data = "", baseURL}) => {
   let head = {
     ...data.headers,
   };
@@ -20,3 +20,5 @@ export const RequestApi = ({ method, url, data = "", baseURL}) => {
     }
   });
 }
+
+export default RequestApi

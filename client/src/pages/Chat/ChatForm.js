@@ -1,7 +1,9 @@
 import React from 'react';
 import { MdInsertEmoticon } from "react-icons/md";
-
-import Picker from 'emoji-picker-react';
+import { Picker, emojiIndex } from 'emoji-mart'
+import 'emoji-mart/css/emoji-mart.css'
+import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
+import { addEmoji, toggleEmojiPicker} from './Emoji';
 
 export default class ChatForm extends React.Component {
     constructor(props) {
@@ -9,25 +11,13 @@ export default class ChatForm extends React.Component {
         this.state = {
             name: '',
             message: '',
-            chosenEmoji: null,
-            isActive: false
+            showEmojiPicker: false
         };
-
+        this.addEmoji = addEmoji.bind(this);
+        this.toggleEmojiPicker = toggleEmojiPicker.bind(this);
         this.handleName = this.handleName.bind(this);
         this.handleMessage = this.handleMessage.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleShow = () => {
-        this.setState({
-            isActive: true
-        })
-    }
-
-    handleHide = () => {
-        this.setState({
-            isActive: false
-        })
     }
 
     handleName(event) {
@@ -38,20 +28,17 @@ export default class ChatForm extends React.Component {
         this.setState({ message: event.target.value });
     }
 
-
     handleSubmit(event) {
         event.preventDefault();
+        if (this.state.message.trim() === '') return
         this.props.addChat(this.state.name, this.state.message);
         this.setState({ name: '', message: '' })
     }
 
-    handleEmoji = (event, emojiObject) => {
-        this.setState({
-            chosenEmoji: ''
-        })
-    }
-
     render() {
+        const {
+            showEmojiPicker, message
+        } = this.state
         return (
             <div className='card-footer'>
                 <form onSubmit={this.handleSubmit}>
@@ -60,23 +47,41 @@ export default class ChatForm extends React.Component {
                             <div className='form-group row'>
                                 <div className="col form">
                                     <input type="text" className="form-control type_name" value={this.state.name} onChange={this.handleName} placeholder='Insert Your Name Here' required />
-                                    {this.state.isActive ? <div className="emoji">
-                                        <Picker
-                                            onEmojiClick={this.handleEmoji}
-                                            pickerStyle={{
-                                                width: '250px',
+                                    {showEmojiPicker ?
+                                        (<Picker
+                                            style={{
                                                 position: 'absolute',
-                                                margin: '25px',
+                                                bottom: '50px',
+                                                right: '40px'
                                             }}
-                                        />
-                                        <MdInsertEmoticon size={30} onClick={this.handleHide} />
-                                    </div>
-                                        :
-                                        <div className="emoji">
-                                            <MdInsertEmoticon size={30} onClick={this.handleShow} />
-                                        </div>
-                                    }
-                                    <input type="text" className="form-control type_msg" value={this.state.message} onChange={this.handleMessage} placeholder='Type a message' />
+                                            onSelect={this.addEmoji}
+                                        />)
+                                        : null}
+                                    <button type="button" className="btn-emoji" onClick={this.toggleEmojiPicker}>
+                                        <MdInsertEmoticon size={30}/>
+                                    </button>
+                                    <ReactTextareaAutocomplete
+                                        type="text"
+                                        className="form-control type_msg"
+                                        value={message}
+                                        name="message"
+                                        loadingComponent={() => <span>Loading</span>}
+                                        onChange={this.handleMessage}
+                                        placeholder='Type a message'
+                                        trigger={{
+                                            ':': {
+                                                dataProvider: token =>
+                                                    emojiIndex.search(token).map(o => ({
+                                                        colons: o.colons,
+                                                        native: o.native,
+                                                    })),
+                                                component: ({ entity: { native, colons } }) => (
+                                                    <div>{`${colons} ${native}`}</div>
+                                                ),
+                                                output: item => `${item.native}`,
+                                            },
+                                        }}
+                                    />
                                 </div>
                                 <div className="input-group-append right-form">
                                     <button type="submit" value="Send" className='input-group-text send_btn'><i className="fas fa-location-arrow"></i></button>

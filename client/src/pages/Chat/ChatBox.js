@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ChatForm from './ChatForm';
 import ChatList from './ChatList';
 import moment from 'moment'
-import { RequestApi } from '../../config/axios';
+import RequestApi from '../../config/axios';
 import io from 'socket.io-client'
 
 const socket = io("http://localhost:3001");

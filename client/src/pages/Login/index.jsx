@@ -1,17 +1,20 @@
 import React, { Component, Fragment } from 'react';
 import './Login.css';
-import { connect } from 'react-redux';
-import { loginUserAPI } from '../../config/redux/action';
 import Button from '../../componens/Button';
 import history from '../../history';
+import RequestApi from '../../config/axios';
+import Swal from 'sweetalert2'
 
 class Login extends Component {
-	state = {
-		username: '',
-		password: '',
-		loading : false,
-		isLogin: false
-	};
+	constructor(props) {
+		super(props);
+		this.state = {
+			value: "",
+			username: "",
+			password: "",
+			isLogin: false,
+		};
+	}
 
 	handleChangeText = (e) => {
 		this.setState({
@@ -19,34 +22,56 @@ class Login extends Component {
 		});
 	};
 
-	handleLoginSubmit = async (e) => {
+	submit = async (e) => {
 		e.preventDefault()
-		console.log('dari screen login');
-		const { username, password } = this.state;
-		if (username && password) {
-			const body = {
-				username,
-				password
-			};
-			try {
-				await this.props.loginAPI(body);
+		const { username, password } = this.state
+		try {
+			const req = {
+				method: 'POST',
+				url: '/users/login',
+				data: {
+					data: {
+						username,
+						password
+					},
+				}
+			}
+			const res = await RequestApi(req)
+			const token = `${res.data.token}`
+			if (res.data.token === null) {
+				
+				Swal.fire({
+					text: "Username or Password wrong!",
+					icon: "error",
+					timer: 3000,
+				});
 				this.setState({
-					username: '',
-					password: ''
+					username : "",
+					password: ""
+				})
+
+			} else {
+				localStorage.setItem("Authorization", token);
+				localStorage.setItem("username", username)
+				Swal.fire({
+					icon: "success",
+					title: "Login success",
+					showConfirmButton: false,
+					timer: 1200,
 				});
 				history.push('/chat')
-
-			} catch (error) {
-				console.log(error);
 			}
-		} else {
-			if (username || password === 0) {
-				console.log('username atau password tidak boleh kosong');
-			} else {
-				alert('username atau password tidak boleh kosong');
-			}
+		} catch (error) {
+			console.log(error)
+			Swal.fire({
+				title: "Something when wrong!",
+				text: "Please ask administrator to fix the issue",
+				icon: "error",
+				timer: 3000,
+			});
 		}
-	};
+
+	}
 
 	render() {
 		return (
@@ -77,7 +102,7 @@ class Login extends Component {
 							<label>Password</label>
 						</div>
 						<div className="pass">Forgot Password</div>
-						<Button title="Login" onClick={this.handleLoginSubmit} loading={this.props.isLoading} login={this.props.isLogin}/>
+						<Button title="Login" onClick={this.submit} />
 						<div className="signup_link">
 							Not a member? <a href="/register">SignUp</a>
 						</div>
@@ -88,13 +113,5 @@ class Login extends Component {
 	}
 }
 
-const reduxState = (state) => ({
-	isLoading: state.loading,
-	isLogin: state.isLogin
-});
 
-const reduxDispatch = (dispatch) => ({
-	loginAPI: (body) => dispatch(loginUserAPI(body))
-});
-
-export default connect(reduxState, reduxDispatch)(Login);
+export default Login;
