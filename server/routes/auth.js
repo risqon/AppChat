@@ -5,16 +5,28 @@ const bcrypt = require('bcrypt')
 const User = require('../models/User')
 //require('dotenv').config()
 const secret = 'rubicamp'
+const helpers = require('../helpers/util')
 
 
 /* GET users listing. */
-router.get('/list', async (req, res) => {
+router.get('/list', helpers.verifyToken, async (req, res) => {
+
+  let response = []
   try {
     const result = await User.find({})
-    res.status(200).json(result);
+    response = result.map(item => {
+      return {
+        _id: item._id,
+        username: item.username,
+        email: item.email,
+        password: item.password,
+        token: item.token
+      }
+    })
+    res.status(200).json(response);
   } catch (error) {
     console.log(error)
-    res.status(500).json({ result });
+    res.status(500).json({ response });
   }
 })
 

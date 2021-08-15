@@ -26,6 +26,9 @@ class Login extends Component {
 		e.preventDefault()
 		const { username, password } = this.state
 		try {
+			this.setState({
+				isLogin: true
+			})
 			const req = {
 				method: 'POST',
 				url: '/users/login',
@@ -33,6 +36,7 @@ class Login extends Component {
 					data: {
 						username,
 						password
+						
 					},
 				}
 			}
@@ -47,7 +51,8 @@ class Login extends Component {
 				});
 				this.setState({
 					username : "",
-					password: ""
+					password: "",
+					isLogin: true
 				})
 
 			} else {
@@ -63,6 +68,9 @@ class Login extends Component {
 			}
 		} catch (error) {
 			console.log(error)
+			this.setState({
+				isLogin: false
+			})
 			Swal.fire({
 				title: "Something when wrong!",
 				text: "Please ask administrator to fix the issue",
@@ -102,7 +110,7 @@ class Login extends Component {
 							<label>Password</label>
 						</div>
 						<div className="pass">Forgot Password</div>
-						<Button title="Login" onClick={this.submit} />
+						<Button title="Login" onClick={this.submit} isLogin={this.state.isLogin}/>
 						<div className="signup_link">
 							Not a member? <a href="/register">SignUp</a>
 						</div>

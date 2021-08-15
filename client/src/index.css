@@ -31,7 +31,7 @@ body,html{
 .card{
   margin: auto;
   height: 600px;
-  width: 700px;
+  width: 500px;
   border-radius: 15px !important;
   background-color: rgba(0,0,0,0.4) !important;
 }
@@ -47,46 +47,59 @@ body,html{
   border-bottom: 0 !important;
 }
 .card-footer{
-  display: inline-block;
+  display: inline-block !important;
   border-radius: 0 0 15px 15px !important;
   border-top: 0 !important;
+  padding: 0 !important;
+  height: 60px !important;
 }
 .container{
   align-content: center;
 }
 .form{
-  margin-top: 10px;
+  margin: 0 !important;
   }
   
 .type_msg{
   background-color: rgba(0, 0, 0, 0.3) !important;
   border:1px !important;
   color:rgba(255, 255, 255, 0.822) !important;
-  margin-top: 1px;
-  width: 90.5%;
-  border-radius: 10px 0 0 10px;
-  resize: none;
-  min-height: auto;
+  border-radius: 0 0 0 0 ;
+  height: 60px !important;
+  width: 100% !important;
 }
   .type_msg:focus{
     box-shadow:none !important;
       outline:0px !important;
 }
-.type_name {
-  background-color: rgba(0,0,0,0.3) !important;
-  border:  1px !important;
-  color:white !important;
-  overflow-y: auto;
-  border-radius: 10px;
-}
+
 .send_btn{
-  border-radius: 0 17px 17px 0 !important;
-  background-color: rgb(0, 203, 218) !important;
-  margin-top: 49px;
-  border:0 !important;
+  background-color: rgba(0,0,0,0.3) !important;
+  border: none !important;
   color: rgb(0, 0, 0) !important;
   cursor: pointer;
-  height: 50px;
+  margin-left:1px;
+  
+  height: 60px!important;
+  border-radius: 0 10px 10px 0 !important;
+}
+
+.btn-emoji{
+  height: 60px;
+  background-color:rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  width: 10%;
+  right: 0;
+  border-radius: 10px 0 0 10px;
+  color: rgb(0, 0, 0) !important;
+  outline: none !important;
+  box-shadow: none !important;
+  border:none !important;
+}
+
+.emoji-row{
+  display: flex;
+  flex-direction: row;
 }
 
 .icon-text {
@@ -160,9 +173,9 @@ max-width: 300px;
 }
 .btn_resend{
   margin-top: 3px;
-    margin-bottom: auto;
-    margin-left: 78px;
-    position: relative;
+  margin-bottom: auto;
+  margin-left: 78px;
+  position: relative;
     
 }
 .circle{
@@ -194,18 +207,3 @@ to {
   animation: spinner .6s linear infinite;
 }
 
-.btn-emoji{
-  height: 60px;
-  background-color:rgba(0, 0, 0, 0.3);
-  margin-right: 15px;
-  margin-top: 1px;
-  cursor: pointer;
-  width: 9%;
-  right: 0;
-  position: absolute;
-  border-radius: 0 10px 10px 0;
-  color:whitesmoke;
-  outline: none !important;
-  box-shadow: none !important;
-  border:none !important;
-}

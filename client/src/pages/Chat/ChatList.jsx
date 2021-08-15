@@ -6,13 +6,15 @@ export default function ChatList(props) {
         <ChatItem
             key={index}
             id={item.id}
-            name={item.name}
             message={item.message}
             sent={item.sent}
             time={item.time}
             resend={() => props.resend(item.id, item.name, item.message)}
             remove={() => props.remove(item.id)} />)
     return (
-            <div>{nodeChat}</div>
+
+        <div>
+            {nodeChat}
+        </div>
     )
 }

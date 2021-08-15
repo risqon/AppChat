@@ -13,8 +13,8 @@ router.get('/', helpers.verifyToken, function (req, res, next) {
 });
 
 router.post('/',helpers.verifyToken, function (req, res, next) {
-  const {id, name, message } = req.body
-  Chat.create({id, name, message}).then((data) => {
+  const {id, message } = req.body
+  Chat.create({id, message}).then((data) => {
     res.status(201).json(data)
   }).catch(() => {
     res.status(500).json(err)

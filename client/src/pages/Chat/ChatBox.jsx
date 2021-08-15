@@ -4,17 +4,19 @@ import ChatList from './ChatList';
 import moment from 'moment'
 import RequestApi from '../../config/axios';
 import io from 'socket.io-client'
+import Swal from 'sweetalert2';
 
 const socket = io("http://localhost:3001");
 export default class ChatBox extends Component {
     constructor(props) {
         super(props);
-        this.state = { data: [], loading: false }
+        this.state = { data: [], username: [], dataUser: [], loading: false, isLogin: false }
 
     }
 
     componentDidMount() {
         this.getChat()
+        this.getUsername()
 
         socket.on('newChat', (data) => {
             const time = moment().format('h:mm a')
@@ -32,8 +34,32 @@ export default class ChatBox extends Component {
         })
     }
 
+    getUsername = async () => {
+        const token = await localStorage.getItem('Authorization')
+        try {
+            const req = {
+                method: 'GET',
+                url: '/users/list',
+                data: {
+                    headers: {
+                        'x-access-token': token
+                    }
+                }
+            }
+            const res = await RequestApi(req)
+            const userName = await localStorage.getItem('username')
+            //   console.log('get user', res)
+            this.setState({
+                username: userName,
+                dataUser: res.data
+            })
+        } catch (error) {
+            console.log(error.res)
+        }
+    }
+
     getChat = async () => {
-        const token = await localStorage.getItem(`setToken`)
+        const token = await localStorage.getItem(`Authorization`)
         try {
             this.setState({
                 loading: true
@@ -52,7 +78,7 @@ export default class ChatBox extends Component {
                 item.sent = true
                 return item
             })
-            console.log('get', res)
+            // console.log('get', res)
             this.setState({
                 data: chats
             })
@@ -65,10 +91,10 @@ export default class ChatBox extends Component {
         }
     }
 
-    addChat = async (name, message) => {
+    addChat = async (message) => {
         const id = Date.now()
         const time = moment().format('h:mm a')
-        const token = await localStorage.getItem(`setToken`)
+        const token = await localStorage.getItem(`Authorization`)
 
         this.setState((state, props) =>
         ({
@@ -76,7 +102,6 @@ export default class ChatBox extends Component {
                 [...state.data,
                 {
                     id,
-                    name,
                     message,
                     time,
                     sent: true
@@ -85,7 +110,6 @@ export default class ChatBox extends Component {
 
         socket.emit('newChat', {
             id,
-            name,
             message
         })
 
@@ -95,7 +119,7 @@ export default class ChatBox extends Component {
                 url: '/chats',
                 data: {
                     data: {
-                        id, name, message
+                        id, message
                     },
                     headers: {
                         'x-access-token': token
@@ -117,8 +141,8 @@ export default class ChatBox extends Component {
         }
     }
 
-    resendChat = async (id, name, message) => {
-        const token = await localStorage.getItem(`setToken`)
+    resendChat = async (id, message) => {
+        const token = await localStorage.getItem(`Authorization`)
 
         try {
             const req = {
@@ -126,7 +150,7 @@ export default class ChatBox extends Component {
                 url: '/chats',
                 data: {
                     data: {
-                        id, name, message
+                        id, message
                     },
                     headers: {
                         'x-access-token': token
@@ -149,8 +173,8 @@ export default class ChatBox extends Component {
     }
 
     removeChat = async (id) => {
-        const token = await localStorage.getItem(`setToken`)
-
+        const token = await localStorage.getItem(`Authorization`)
+       
         try {
             const req = {
                 method: 'DELETE',
@@ -165,14 +189,30 @@ export default class ChatBox extends Component {
             socket.emit('delete-backEnd', {
                 id
             })
-
             const res = await RequestApi(req)
-            if (res) {
-                this.setState(state => ({
-                    data: state.data.filter(item => item.id !== id)
-                }))
-            }
-            alert('are you sere??')
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This message will be deleted !",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#08db93',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No!',
+            }).then(res => {
+                if (res) {
+                    this.setState(state => ({
+                        data: state.data.filter(item => item.id !== id)
+    
+                    }))
+                }
+                Swal.fire({
+                    type: 'success',
+                    title: 'chat has been deleted',
+                    showConfirmationButton: false,
+                 })
+            })
+            
         } catch (error) {
             console.log(error)
         }
@@ -185,7 +225,7 @@ export default class ChatBox extends Component {
                 <div className="card">
                     <div className="card-header text-center">
                         <div>
-                            <h1 className="text-dark">React Chats</h1>
+                            <h1 className="text-dark">Welcome {this.state.username}</h1>
                         </div>
                     </div>
                     <div className="card-body msg_card_body">
