@@ -51,7 +51,8 @@ body,html{
   border-radius: 0 0 15px 15px !important;
   border-top: 0 !important;
   padding: 0 !important;
-  height: 60px !important;
+  height: 65px !important;
+  background-color: rgba(0,0,0,0.4) !important;
 }
 .container{
   align-content: center;
@@ -79,7 +80,6 @@ body,html{
   color: rgb(0, 0, 0) !important;
   cursor: pointer;
   margin-left:1px;
-  
   height: 60px!important;
   border-radius: 0 10px 10px 0 !important;
 }
@@ -95,6 +95,7 @@ body,html{
   outline: none !important;
   box-shadow: none !important;
   border:none !important;
+  margin-bottom: 2px !important;
 }
 
 .emoji-row{
@@ -207,3 +208,16 @@ to {
   animation: spinner .6s linear infinite;
 }
 
+.btn-logout {
+  background: #222227;
+  border-radius: 10px;
+  height: 35px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color:#0000;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  color: #b3f1ff;
+}

@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
-import ChatForm from './ChatForm';
-import ChatList from './ChatList';
+import ChatForm from '../../componens/ChatForm';
+import ChatList from '../../componens/ChatList';
 import moment from 'moment'
 import RequestApi from '../../config/axios';
 import io from 'socket.io-client'
 import Swal from 'sweetalert2';
+import history from '../../history';
 
 const socket = io("http://localhost:3001");
 export default class ChatBox extends Component {
     constructor(props) {
         super(props);
-        this.state = { data: [], username: [], dataUser: [], loading: false, isLogin: false }
-
+        this.state = {
+            data: [],
+            userName: [],
+            loading: false,
+            isLogin: false
+        }
     }
 
     componentDidMount() {
@@ -24,6 +29,7 @@ export default class ChatBox extends Component {
                 data: [...state.data, { ...data, time, sent: true }]
             }))
         })
+
         socket.on('delete-frontEnd', (id) => {
             console.log(id)
             this.setState((state, props) => ({
@@ -50,7 +56,7 @@ export default class ChatBox extends Component {
             const userName = await localStorage.getItem('username')
             //   console.log('get user', res)
             this.setState({
-                username: userName,
+                userName: userName,
                 dataUser: res.data
             })
         } catch (error) {
@@ -95,6 +101,7 @@ export default class ChatBox extends Component {
         const id = Date.now()
         const time = moment().format('h:mm a')
         const token = await localStorage.getItem(`Authorization`)
+        const username = await localStorage.getItem('username')
 
         this.setState((state, props) =>
         ({
@@ -104,13 +111,15 @@ export default class ChatBox extends Component {
                     id,
                     message,
                     time,
+                    username,
                     sent: true
                 }]
         }))
 
         socket.emit('newChat', {
             id,
-            message
+            message,
+            username
         })
 
         try {
@@ -119,7 +128,7 @@ export default class ChatBox extends Component {
                 url: '/chats',
                 data: {
                     data: {
-                        id, message
+                        id, message, username
                     },
                     headers: {
                         'x-access-token': token
@@ -127,7 +136,7 @@ export default class ChatBox extends Component {
                 }
             }
             const res = await RequestApi(req)
-            console.log(res)
+            console.log('grt', res)
         } catch (error) {
             console.log(error)
             this.setState(state => ({
@@ -143,6 +152,7 @@ export default class ChatBox extends Component {
 
     resendChat = async (id, message) => {
         const token = await localStorage.getItem(`Authorization`)
+        const username = await localStorage.getItem('username')
 
         try {
             const req = {
@@ -150,7 +160,7 @@ export default class ChatBox extends Component {
                 url: '/chats',
                 data: {
                     data: {
-                        id, message
+                        id, username, message
                     },
                     headers: {
                         'x-access-token': token
@@ -174,7 +184,7 @@ export default class ChatBox extends Component {
 
     removeChat = async (id) => {
         const token = await localStorage.getItem(`Authorization`)
-       
+
         try {
             const req = {
                 method: 'DELETE',
@@ -190,6 +200,7 @@ export default class ChatBox extends Component {
                 id
             })
             const res = await RequestApi(req)
+            console.log(res)
             Swal.fire({
                 title: 'Are you sure?',
                 text: "This message will be deleted !",
@@ -203,18 +214,51 @@ export default class ChatBox extends Component {
                 if (res) {
                     this.setState(state => ({
                         data: state.data.filter(item => item.id !== id)
-    
+
                     }))
                 }
                 Swal.fire({
                     type: 'success',
                     title: 'chat has been deleted',
                     showConfirmationButton: false,
-                 })
+                })
             })
-            
+
         } catch (error) {
             console.log(error)
+        }
+    }
+
+    handleLogout = async () => {
+        const token = await localStorage.getItem(`Authorization`)
+        try {
+            const req = {
+                method: "GET",
+                url: "/users/destroy",
+                data: {
+                    data: {
+                        logout: true
+                    },
+                    headers: {
+                        'x-access-token': token
+                    }
+                }
+            }
+            const res = await RequestApi(req)
+            if (res) {
+                localStorage.removeItem("username")
+                localStorage.removeItem("Authorization")
+                history.push('/')
+            }
+            console.log('des', res)
+        } catch (error) {
+            console.log(error);
+            Swal.fire({
+                title: "Something when wrong!",
+                text: "Please ask administrator to fix the issue",
+                icon: "error",
+                timer: 3000,
+            })
         }
     }
 
@@ -225,14 +269,14 @@ export default class ChatBox extends Component {
                 <div className="card">
                     <div className="card-header text-center">
                         <div>
-                            <h1 className="text-dark">Welcome {this.state.username}</h1>
+                            <h1 className="text-dark">Welcome {this.state.userName}</h1>
+                            <button className="btn-logout" onClick={this.handleLogout}>Logout</button>
                         </div>
                     </div>
                     <div className="card-body msg_card_body">
                         <ChatList chats={this.state.data} resend={this.resendChat} remove={this.removeChat} />
                     </div>
                     <ChatForm addChat={this.addChat} />
-
                 </div>
             </div>
         )

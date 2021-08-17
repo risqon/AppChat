@@ -1,18 +1,19 @@
 import React from 'react';
-import ChatItem from './ChatItem'
+import ChatItem from '../ChatItem'
 
 export default function ChatList(props) {
     const nodeChat = props.chats.map((item, index) =>
         <ChatItem
             key={index}
             id={item.id}
+            username={item.username}
             message={item.message}
             sent={item.sent}
             time={item.time}
             resend={() => props.resend(item.id, item.name, item.message)}
             remove={() => props.remove(item.id)} />)
-    return (
 
+    return (
         <div>
             {nodeChat}
         </div>

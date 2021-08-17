@@ -108,7 +108,7 @@ router.post('/login', async (req, res, next) => {
 
 router.post('/check', async (req, res, next) => {
 
-  const token = req.header("Authorization")
+  const token = req.header("x-access-token")
 
   console.log('ini', token)
 
@@ -135,17 +135,17 @@ router.post('/check', async (req, res, next) => {
 });
 
 router.get('/destroy', async (req, res, next) => {
-  const token = req.header("Authorization")
+  const token = req.header("x-access-token")
 
   let response = {
     logout: false
-  };
+  }; 
   if (token) {
     try {
       const decoded = jwt.verify(token, secret);
       if (!decoded) return res.status(500).json(response)
 
-      const user = await User.findOneAndUpdate({ email: decoded.email }, { token: undefined })
+      const user = await User.findOneAndUpdate({ username: decoded.username }, { token: undefined })
       if (!user) return res.status(500).json(response)
 
       response.logout = true

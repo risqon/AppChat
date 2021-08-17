@@ -3,7 +3,7 @@ import { MdInsertEmoticon } from "react-icons/md";
 import { Picker, emojiIndex } from 'emoji-mart'
 import 'emoji-mart/css/emoji-mart.css'
 //import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
-import { addEmoji, toggleEmojiPicker } from '../../componens/method';
+import { addEmoji, toggleEmojiPicker } from '../method';
 //import RequestApi from '../../config/axios';
 
 export default class ChatForm extends React.Component {
@@ -15,27 +15,28 @@ export default class ChatForm extends React.Component {
         };
         this.addEmoji = addEmoji.bind(this);
         this.toggleEmojiPicker = toggleEmojiPicker.bind(this);
-        this.handleMessage = this.handleMessage.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleMessage(event) {
-        this.setState({ message: event.target.value });
+    handleChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        this.setState({
+            [name]: value,
+        })
     }
 
     handleSubmit(event) {
         this.props.addChat(this.state.message);
         this.setState({ message: '' })
-       
-
     }
 
     handleKeyPress = (event) => {
         if (event.key === 'Enter') {
-           event.preventDefault();
+            event.preventDefault();
             this.handleSubmit()
-           
-
         }
     }
 
@@ -69,7 +70,7 @@ export default class ChatForm extends React.Component {
                                             className="form-control type_msg"
                                             value={message}
                                             name="message"
-                                            onChange={this.handleMessage}
+                                            onChange={this.handleChange}
                                             onKeyPress={this.handleKeyPress}
                                             placeholder='Type a message'
                                             trigger={{

@@ -5,18 +5,16 @@ export default function ChatItem(props) {
     return (
         <div className='d-flex mb-4 ml-5'>
             <div className="img_cont_msg">
-                <p className="rounded-circle user_img_msg"> </p>
+                <p className="rounded-circle user_img_msg">^_^</p>
             </div>
-
             <div className='boks'>
-                <h6 className='name'>{props.name}</h6>
+                <h6 className='name'>{props.username}</h6>
                 <div className="msg_cotainer">
                     <div> <ReactMarkdown
                         source={props.message}
                         escapeHtml={false}
                     /> </div>
                 </div>
-
                 <div className='row'>
                     <span className="msg_time">{props.time}</span>
                     {props.sent && <button className='btn btn danger' onClick={props.remove}><i className='cg-cl-del fas fa-trash-alt fa-xs'></i></button>}
@@ -33,17 +31,5 @@ export default function ChatItem(props) {
                     </div>}
             </div>
         </div>
-
-        // <div className="card">
-        //     <div className="card-header">
-        //         <h3 className="text-primary">{props.name}</h3>
-        //     </div>
-        //     <div className="card-body">
-        //         <h4 className="card-text">{props.message}</h4>
-        //         {!props.sent && <p style={{ color: 'red', 'fontSize': '8pt' }}>network failed</p>}
-        //         <button type="button" className={props.sent ? 'badge badge-pill badge-danger' : 'badge badge-pill badge-warning'} onClick={props.sent ? props.remove : props.resend}>{props.sent ? 'Delete' : 'Resend'}</button>
-
-        //     </div >
-        // </div>
     )
 }
